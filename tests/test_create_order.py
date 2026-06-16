@@ -5,6 +5,10 @@ from data import BASE_URL
 
 class TestCreateOrder:
 
+    @allure.step("Отправка запроса на создание заказа")
+    def create_order_request(self, payload):
+        return requests.post(f'{BASE_URL}/api/v1/orders', json=payload)
+
     @pytest.mark.parametrize("color", [
         ["BLACK"],
         ["GREY"],
@@ -24,6 +28,6 @@ class TestCreateOrder:
             "comment": "Saske, come back to Konoha",
             "color": color
         }
-        response = requests.post(f'{BASE_URL}/api/v1/orders', json=payload)
+        response = self.create_order_request(payload)
         assert response.status_code == 201
         assert "track" in response.json()

@@ -1,12 +1,14 @@
 import requests
 import random
 import string
+import allure
 from data import BASE_URL
 
 def generate_random_string(length):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
+@allure.step("Регистрация нового курьера")
 def register_new_courier_and_return_login_password():
     login_pass = []
     login = generate_random_string(10)

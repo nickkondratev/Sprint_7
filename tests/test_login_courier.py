@@ -5,13 +5,17 @@ from helpers import generate_random_string
 
 class TestLoginCourier:
 
+    @allure.step("Отправка запроса на авторизацию")
+    def login_request(self, payload):
+        return requests.post(f'{BASE_URL}/api/v1/courier/login', data=payload)
+
     @allure.title('Успешная авторизация курьера')
     def test_login_courier_success(self, courier):
         payload = {
             "login": courier["login"],
             "password": courier["password"]
         }
-        response = requests.post(f'{BASE_URL}/api/v1/courier/login', data=payload)
+        response = self.login_request(payload)
         assert response.status_code == 200
         assert "id" in response.json()
 
@@ -20,7 +24,7 @@ class TestLoginCourier:
         payload = {
             "password": courier["password"]
         }
-        response = requests.post(f'{BASE_URL}/api/v1/courier/login', data=payload)
+        response = self.login_request(payload)
         assert response.status_code == 400
         assert "Недостаточно данных" in response.json()["message"]
 
@@ -30,7 +34,7 @@ class TestLoginCourier:
             "login": courier["login"],
             "password": "wrong_password"
         }
-        response = requests.post(f'{BASE_URL}/api/v1/courier/login', data=payload)
+        response = self.login_request(payload)
         assert response.status_code == 404
         assert "Учетная запись не найдена" in response.json()["message"]
 
@@ -40,6 +44,6 @@ class TestLoginCourier:
             "login": generate_random_string(10),
             "password": generate_random_string(10)
         }
-        response = requests.post(f'{BASE_URL}/api/v1/courier/login', data=payload)
+        response = self.login_request(payload)
         assert response.status_code == 404
         assert "Учетная запись не найдена" in response.json()["message"]
